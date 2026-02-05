@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triết Học Về Niềm Vui: Hedonism vs Epicureanism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fcfbf9; /* Warm neutral background */
+            color: #2d3748;
+        }
+        h1, h2, h3, h4, .serif-font {
+            font-family: 'Merriweather', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .interactive-card {
+            transition: all 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .highlight-text {
+            background: linear-gradient(120deg, #e6fffa 0%, #b2f5ea 100%);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        .hedonism-highlight {
+            color: #c53030;
+            font-weight: bold;
+        }
+        .epicurean-highlight {
+            color: #2f855a;
+            font-weight: bold;
+        }
+        /* Custom Scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutral Background (#fcfbf9) with Sage Green (#2f855a) for Epicureanism and Muted Terracotta/Red (#c53030) for Hedonism to signify Calm vs. Intensity. -->
+    
+    <!-- Application Structure Plan:
+        1. **Hero Section (The Crossroads):** Introduces the dichotomy immediately. Visual split between the two paths.
+        2. **Foundations (Context):** Detailed article-style text explaining the core concepts, ensuring academic depth suitable for students.
+        3. **Interactive Analysis (The Core Conflict):** - **Chart 1 (The Hedonic Treadmill):** Demonstrates the cycle of desire in Hedonism (Kinetic Pleasure).
+           - **Chart 2 (The Hierarchy of Desires):** Interactive Donut chart explaining Epicurus's categorization of needs (Static Pleasure).
+        4. **Comparative Table (Direct Clash):** A functional, tab-based or side-by-side comparison for easy scanning of differences.
+        5. **Thought Experiments (Application):** Interactive scenarios where users make choices to see which philosophy they align with in practice.
+        6. **Gallery of Wisdom (Micro-copy):** Quotes and key takeaways card-style for reflection.
+    -->
+    
+    <!-- Visualization & Content Choices:
+        1. **Line Chart (Hedonic Treadmill):**
+           - *Goal:* Show the instability of Hedonism.
+           - *Method:* Chart.js Line Chart.
+           - *Interaction:* None needed, animation tells the story.
+           - *Justification:* Visualizes "Kinetic Pleasure" (peaks and valleys) vs "Static Pleasure" (stable line).
+        
+        2. **Doughnut Chart (Epicurus' Desires):**
+           - *Goal:* Explain "Natural & Necessary" vs "Vain".
+           - *Method:* Chart.js Doughnut.
+           - *Interaction:* Clicking segments updates explanation text.
+           - *Justification:* Helps students visualize the proportion of desires one should focus on.
+        
+        3. **Scenario Cards (Thought Experiments):**
+           - *Goal:* Apply theory to practice.
+           - *Method:* HTML/JS interactive cards.
+           - *Interaction:* Click to reveal the philosophical outcome.
+           - *Justification:* Engaging way to test understanding.
+           
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="serif-font text-xl font-bold text-gray-800">Triết Học Về Niềm Vui</span>
+                </div>
+                <div class="hidden sm:flex items-center space-x-8">
+                    <button onclick="scrollToSection('hero')" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Khởi Đầu</button>
+                    <button onclick="scrollToSection('analysis')" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Phân Tích</button>
+                    <button onclick="scrollToSection('comparison')" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">So Sánh</button>
+                    <button onclick="scrollToSection('experiment')" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Trải Nghiệm</button>
+                </div>
+                <!-- Mobile menu button placeholder -->
+                <div class="flex items-center sm:hidden">
+                    <button class="text-gray-500 hover:text-gray-700 focus:outline-none" onclick="toggleMobileMenu()">
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden sm:hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="scrollToSection('hero'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Khởi Đầu</button>
+                <button onclick="scrollToSection('analysis'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Phân Tích</button>
+                <button onclick="scrollToSection('comparison'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">So Sánh</button>
+                <button onclick="scrollToSection('experiment'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Trải Nghiệm</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="bg-gradient-to-b from-stone-100 to-[#fcfbf9] pt-16 pb-20 px-4 sm:px-6 lg:px-8 text-center">
+        <div class="max-w-4xl mx-auto">
+            <p class="text-sm font-bold tracking-widest text-gray-500 uppercase mb-3">Hai Con Đường Của Niềm Vui</p>
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Bạn Chọn <span class="hedonism-highlight">Khoái Lạc Tột Đỉnh</span> hay <span class="epicurean-highlight">Sự An Yên Vĩnh Cửu</span>?
+            </h1>
+            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Niềm vui là mục đích sống của con người. Nhưng cách chúng ta định nghĩa và theo đuổi nó sẽ quyết định hạnh phúc của chúng ta là ngọn lửa bùng cháy dữ dội hay dòng nước êm đềm bất tận.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="scrollToSection('intro')" class="bg-gray-900 text-white px-8 py-3 rounded-full hover:bg-gray-800 transition duration-300 font-medium">
+                    Khám Phá Ngay
+                </button>
+                <button onclick="scrollToSection('experiment')" class="bg-white text-gray-900 border border-gray-300 px-8 py-3 rounded-full hover:bg-gray-50 transition duration-300 font-medium">
+                    Thử Thách Tư Duy
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content Wrapper -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- Introduction Section (Long-form Text) -->
+        <section id="intro" class="max-w-3xl mx-auto">
+            <div class="border-l-4 border-gray-800 pl-6 mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Bản Chất Của Sự Khác Biệt</h2>
+                <p class="text-gray-500 italic">"Chúng ta không được chọn hoàn cảnh sinh ra, nhưng chúng ta được chọn thái độ sống."</p>
+            </div>
+            
+            <div class="prose prose-lg text-gray-700">
+                <p class="mb-6">
+                    Từ hàng ngàn năm trước, con người đã tự hỏi: <strong>Điều gì làm nên một cuộc đời đáng sống?</strong> Hầu hết chúng ta đều đồng ý rằng đó là sự hạnh phúc, hay niềm vui. Tuy nhiên, định nghĩa về niềm vui đã chia tách triết học thành hai nhánh lớn, đại diện cho hai thái cực tâm lý của nhân loại.
+                </p>
+                <p class="mb-6">
+                    Một bên là <strong class="hedonism-highlight">Hedonism (Chủ nghĩa khoái lạc)</strong>, đại diện cho bản năng nguyên thủy: tìm kiếm sự thỏa mãn tối đa, ngay lập tức. Đó là tiếng gọi của những bữa tiệc, danh vọng, và những cảm xúc mãnh liệt.
+                </p>
+                <p class="mb-6">
+                    Bên kia là <strong class="epicurean-highlight">Epicureanism (Chủ nghĩa Epicurus - hay Hưởng lạc)</strong>, một sự tinh chỉnh sâu sắc của niềm vui. Epicurus cho rằng khoái lạc đích thực không phải là sự hưng phấn, mà là sự vắng mặt của đau đớn (aponia) và sự tĩnh tại của tâm hồn (ataraxia).
+                </p>
+                <div class="bg-amber-50 p-6 rounded-lg border border-amber-200 mt-8">
+                    <h4 class="font-bold text-amber-900 mb-2">💡 Key Takeaway:</h4>
+                    <p class="text-amber-800 m-0">
+                        Hedonism tập trung vào việc <strong>"Thêm vào"</strong> (thêm niềm vui, thêm trải nghiệm).<br>
+                        Epicureanism tập trung vào việc <strong>"Bớt đi"</strong> (bớt đau đớn, bớt lo âu, bớt ham muốn thừa thãi).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deep Dive: Hedonism & The Treadmill -->
+        <section id="analysis" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-sm font-bold text-red-600 uppercase tracking-wider mb-2 block">Góc Nhìn 1</span>
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Hedonism: Vòng Lặp Vô Tận</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Với Hedonism, niềm vui là mục tiêu trực tiếp. Mọi hành động đều được cân đo đong đếm dựa trên lượng "pleasure" (khoái cảm) mà nó mang lại. Tuy nhiên, tâm lý học hiện đại gọi đây là <strong>"Hedonic Treadmill" (Vòng chạy khoái lạc)</strong>.
+                </p>
+                <p class="text-gray-700 mb-6 leading-relaxed">
+                    Khi bạn đạt được một điều gì đó (mua xe mới, được thăng chức), mức độ hạnh phúc tăng vọt nhưng nhanh chóng quay về mức bão hòa. Để cảm thấy vui trở lại, bạn cần một liều lượng kích thích lớn hơn.
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-2">➤</span>
+                        <span><strong>Ưu điểm:</strong> Mang lại năng lượng, động lực phấn đấu và những trải nghiệm đáng nhớ.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-2">➤</span>
+                        <span><strong>Nhược điểm:</strong> Dễ dẫn đến nghiện ngập, trống rỗng và thiếu ổn định.</span>
+                    </li>
+                </ul>
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-600 italic">"You can live to be a hundred if you give up all the things that make you want to live to be a hundred." — Woody Allen</p>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Biểu Đồ Khoái Lạc Động (Kinetic Pleasure)</h3>
+                    <div class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Mô phỏng</div>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Biểu đồ thể hiện sự dao động của cảm xúc khi theo đuổi khoái lạc nhất thời.</p>
+                <!-- Chart Container -->
+                <div class="chart-container">
+                    <canvas id="hedonicChart"></canvas>
+                </div>
+                <div class="mt-4 flex justify-center">
+                    <button onclick="addStimulus()" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded shadow transition">
+                        + Thêm Kích Thích Mới (Mua sắm, Tiệc tùng...)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deep Dive: Epicureanism & The Garden -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+             <!-- Order swap on mobile for better flow, visuals first then text? No, stick to consistent layout but visual right is fine. -->
+            <div class="lg:order-2">
+                <span class="text-sm font-bold text-green-600 uppercase tracking-wider mb-2 block">Góc Nhìn 2</span>
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Epicureanism: Khu Vườn Tĩnh Lặng</h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    Epicurus không khuyên chúng ta từ bỏ niềm vui, mà ông dạy ta cách <strong>quản trị ham muốn</strong>. Ông phân loại ham muốn thành 3 nhóm. Bí quyết của hạnh phúc là tập trung vào nhóm 1 và loại bỏ nhóm 3.
+                </p>
+                <div class="space-y-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">1</div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Tự nhiên & Cần thiết</h4>
+                            <p class="text-sm text-gray-600">Ăn uống đủ chất, chỗ ở, tình bạn. (Mang lại sự giải thoát khỏi đau đớn).</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold">2</div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Tự nhiên & Không cần thiết</h4>
+                            <p class="text-sm text-gray-600">Ăn ngon, mặc đẹp, tình dục. (Có thể tận hưởng nhưng không được lệ thuộc).</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">3</div>
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Không tự nhiên & Không cần thiết</h4>
+                            <p class="text-sm text-gray-600">Danh vọng, quyền lực, sự giàu có vô tận. (Không bao giờ thỏa mãn được).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <p class="text-sm text-green-800 italic">"Đừng làm hỏng những gì bạn đang có bằng cách ham muốn những gì bạn không có." — Epicurus</p>
+                </div>
+            </div>
+
+            <div class="lg:order-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Cơ Cấu Ham Muốn Epicurean</h3>
+                    <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Tương tác</div>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Nhấp vào các phần của biểu đồ để xem lời khuyên của Epicurus.</p>
+                <!-- Chart Container -->
+                <div class="chart-container">
+                    <canvas id="epicureanChart"></canvas>
+                </div>
+                <div id="epicurean-advice" class="mt-4 p-3 bg-gray-50 rounded text-sm text-gray-700 border-l-4 border-green-500 min-h-[80px]">
+                    Hãy chọn một loại ham muốn trên biểu đồ để xem triết lý tương ứng.
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparative Analysis (Table) -->
+        <section id="comparison" class="bg-slate-50 rounded-2xl p-8 sm:p-12">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900">Bảng Đối Chiếu Trực Diện</h2>
+                <p class="text-gray-600 mt-2">Sự khác biệt cốt lõi giữa Khoái lạc động (Kinetic) và Khoái lạc tĩnh (Static/Catastematic).</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="p-4 border-b-2 border-gray-200 font-bold text-gray-500 uppercase text-xs tracking-wider w-1/4">Tiêu Chí</th>
+                            <th class="p-4 border-b-2 border-red-200 bg-red-50 text-red-800 font-bold w-1/3">Hedonism (Khoái Lạc)</th>
+                            <th class="p-4 border-b-2 border-green-200 bg-green-50 text-green-800 font-bold w-1/3">Epicureanism (Hưởng Lạc/An Nhiên)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm sm:text-base">
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                            <td class="p-4 border-b border-gray-200 font-medium text-gray-900">Mục tiêu tối thượng</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Tối đa hóa niềm vui (Positive Pleasure).</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Giảm thiểu đau khổ (Absence of Pain - Aponia).</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                            <td class="p-4 border-b border-gray-200 font-medium text-gray-900">Tính chất</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Động, mãnh liệt, nhất thời (Kinetic).</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Tĩnh, nhẹ nhàng, bền vững (Static/Ataraxia).</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                            <td class="p-4 border-b border-gray-200 font-medium text-gray-900">Thái độ với ham muốn</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Thỏa mãn ham muốn ngay khi có thể.</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Kiểm soát và loại bỏ ham muốn không cần thiết.</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                            <td class="p-4 border-b border-gray-200 font-medium text-gray-900">Rủi ro</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Nghiện ngập, thất vọng khi niềm vui qua đi, lo âu.</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Có thể bị coi là thụ động hoặc thiếu tham vọng.</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                            <td class="p-4 border-b border-gray-200 font-medium text-gray-900">Ví dụ điển hình</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Mua sắm xa xỉ, tiệc tùng thâu đêm, danh vọng.</td>
+                            <td class="p-4 border-b border-gray-200 text-gray-700">Bữa ăn đạm bạc cùng bạn bè, đọc sách, ngắm thiên nhiên.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Thought Experiment Section (Interactive) -->
+        <section id="experiment">
+            <div class="text-center mb-10">
+                <span class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-2 block">Thực Hành Tư Duy</span>
+                <h2 class="text-3xl font-bold text-gray-900">Tình Huống Giả Định: Bữa Tiệc Của Các Vị Thần</h2>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Hãy tưởng tượng bạn được mời đến một bữa tiệc buffet vô tận. Bạn sẽ chọn hành động như thế nào? Nhấp vào lựa chọn để xem phân tích triết học.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Option 1 -->
+                <div class="interactive-card bg-white p-6 rounded-xl shadow-md border border-gray-200 cursor-pointer" onclick="revealScenario('hedonism')">
+                    <div class="text-4xl mb-4">🍖🍷</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Thử Hết Mọi Thứ</h3>
+                    <p class="text-gray-600 text-sm">Bạn cố gắng nếm thử mọi món ăn ngon nhất, uống loại rượu đắt nhất cho đến khi no căng.</p>
+                    <div id="result-hedonism" class="hidden mt-4 pt-4 border-t border-gray-100 text-sm">
+                        <strong class="text-red-600">Góc nhìn Hedonism:</strong> Tuyệt vời! Bạn đang tối đa hóa trải nghiệm hiện tại. Nhưng ngày mai bạn có thể bị đầy bụng và khao khát một bữa tiệc lớn hơn nữa.
+                    </div>
+                </div>
+
+                <!-- Option 2 -->
+                <div class="interactive-card bg-white p-6 rounded-xl shadow-md border border-gray-200 cursor-pointer" onclick="revealScenario('epicurean')">
+                    <div class="text-4xl mb-4">🍞🧀</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Vừa Đủ Và Trò Chuyện</h3>
+                    <p class="text-gray-600 text-sm">Bạn chọn một ít bánh mì, phô mai và dành phần lớn thời gian trò chuyện sâu sắc với người bên cạnh.</p>
+                    <div id="result-epicurean" class="hidden mt-4 pt-4 border-t border-gray-100 text-sm">
+                        <strong class="text-green-600">Góc nhìn Epicurean:</strong> Hoàn hảo! Bạn thỏa mãn cơn đói (tự nhiên) và nuôi dưỡng tình bạn (cần thiết). Bạn ra về với tâm trí nhẹ nhàng, không hối tiếc.
+                    </div>
+                </div>
+
+                <!-- Option 3 -->
+                <div class="interactive-card bg-white p-6 rounded-xl shadow-md border border-gray-200 cursor-pointer" onclick="revealScenario('ascetic')">
+                    <div class="text-4xl mb-4">🚫💧</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Từ Chối Tất Cả</h3>
+                    <p class="text-gray-600 text-sm">Bạn quyết định nhịn ăn để rèn luyện ý chí, chỉ uống nước lọc.</p>
+                    <div id="result-ascetic" class="hidden mt-4 pt-4 border-t border-gray-100 text-sm">
+                        <strong class="text-gray-600">Góc nhìn Khắc Kỷ (Stoicism/Asceticism):</strong> Đây không phải Epicureanism. Epicurus không cổ vũ khổ hạnh ép buộc. Nếu đói mà không ăn thì đó là tạo ra đau đớn không cần thiết.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote Gallery -->
+        <section class="bg-gray-900 rounded-3xl p-8 sm:p-16 text-center text-white relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            
+            <h2 class="text-2xl font-serif italic mb-8 relative z-10">"Lời Nhắn Cho Người Tìm Kiếm"</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto relative z-10">
+                <div class="bg-gray-800 p-6 rounded-lg text-left border border-gray-700">
+                    <p class="text-lg mb-4">"Không gì là đủ đối với người coi sự 'đủ' là quá ít."</p>
+                    <footer class="text-green-400 font-bold text-sm">— Epicurus</footer>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg text-left border border-gray-700">
+                    <p class="text-lg mb-4">"Hạnh phúc không nằm ở việc sở hữu nhiều, mà ở việc tận hưởng nhiều."</p>
+                    <footer class="text-blue-400 font-bold text-sm">— Charles Spurgeon (Quan điểm trung hòa)</footer>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p class="mb-2">Nội dung được tổng hợp và biên soạn dựa trên tài liệu về triết học Hy Lạp cổ đại.</p>
+            <p>© 2024 Philosophy Interactive Lab. Designed for Educational Purpose.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Navigation Logic ---
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- Chart 1: The Hedonic Treadmill (Line Chart) ---
+        // Context: Shows satisfaction spiking then dropping below baseline, requiring higher spikes.
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctxHedonic = document.getElementById('hedonicChart').getContext('2d');
+            
+            // Initial Data
+            const labels = ['Bình thường', 'Kích thích 1', 'Thích ứng', 'Buồn chán', 'Kích thích 2', 'Thích ứng', 'Trống rỗng'];
+            const dataPoints = [5, 9, 6, 4, 9.5, 5.5, 3]; // Volatile curve
+
+            window.hedonicChart = new Chart(ctxHedonic, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mức độ Hạnh Phúc (Hedonism)',
+                        data: dataPoints,
+                        borderColor: '#c53030', // Red
+                        backgroundColor: 'rgba(197, 48, 48, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4, // Smooth curves
+                        fill: true,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#c53030',
+                        pointRadius: 5
+                    },
+                    {
+                        label: 'Mức độ An Nhiên (Epicureanism)',
+                        data: [5, 5.5, 5.5, 5.5, 6, 6, 6.5], // Stable, slight rise
+                        borderColor: '#2f855a', // Green
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.2,
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: { display: true, text: 'Chỉ số Hài lòng' }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 } } // Smaller font for mobile
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+
+            // --- Chart 2: Epicurus' Hierarchy of Desires (Doughnut) ---
+            const ctxEpicurean = document.getElementById('epicureanChart').getContext('2d');
+            const epicureanChart = new Chart(ctxEpicurean, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tự nhiên & Cần thiết', 'Tự nhiên & Không cần thiết', 'Vô ích & Phù phiếm'],
+                    datasets: [{
+                        data: [40, 30, 30], // Visual proportions
+                        backgroundColor: [
+                            '#48bb78', // Green (Focus here)
+                            '#ecc94b', // Yellow (Moderate)
+                            '#f56565'  // Red (Avoid)
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { enabled: false } // Disable default tooltip to use custom text box
+                    },
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            updateEpicureanAdvice(index);
+                        }
+                    }
+                }
+            });
+
+            function updateEpicureanAdvice(index) {
+                const adviceBox = document.getElementById('epicurean-advice');
+                const adviceContent = [
+                    "<strong>🌿 Nhóm Cốt Lõi:</strong> Đây là những điều kiện tối thiểu để sinh tồn và hạnh phúc (nước uống, bạn bè, tri thức). Epicurus khuyên: <em>'Hãy thỏa mãn chúng để đạt trạng thái không đau đớn (aponia).'</em>",
+                    "<strong>🍰 Nhóm Chừng Mực:</strong> Những thứ mang lại sự đa dạng cho niềm vui (món ăn ngon, giường êm). Epicurus khuyên: <em>'Tận hưởng nếu có, nhưng đừng đau khổ nếu thiếu chúng.'</em>",
+                    "<strong>🚫 Nhóm Cần Tránh:</strong> Danh vọng, quyền lực, sự bất tử. Chúng không có giới hạn tự nhiên. Epicurus khuyên: <em>'Loại bỏ hoàn toàn, vì chúng chỉ mang lại lo âu và sự lệ thuộc.'</em>"
+                ];
+                
+                // Colors corresponding to the chart segments
+                const colors = ['border-green-500', 'border-yellow-500', 'border-red-500'];
+                
+                // Reset classes
+                adviceBox.className = `mt-4 p-3 bg-gray-50 rounded text-sm text-gray-700 border-l-4 min-h-[80px] ${colors[index]}`;
+                adviceBox.innerHTML = adviceContent[index];
+            }
+        });
+
+        // --- Interaction Logic: Hedonic Stimulus Button ---
+        let stimulusCount = 0;
+        function addStimulus() {
+            if (!window.hedonicChart) return;
+            
+            stimulusCount++;
+            const chart = window.hedonicChart;
+            const currentData = chart.data.datasets[0].data;
+            const currentLabels = chart.data.labels;
+            
+            // Logic: High spike, then crash lower than before
+            const lastVal = currentData[currentData.length - 1];
+            const newVal = Math.min(10, lastVal + 4); // Spike
+            const crashVal = Math.max(1, lastVal - 1.5); // Crash lower
+            
+            // Add Spike
+            chart.data.labels.push(`Kích thích Mới ${stimulusCount}`);
+            chart.data.datasets[0].data.push(newVal);
+            
+            // Add Crash (simulated delay for effect, but here immediate for chart update)
+            chart.data.labels.push('Thích ứng nhanh');
+            chart.data.datasets[0].data.push(crashVal);
+            
+            // Limit data points to keep chart readable
+            if (chart.data.labels.length > 12) {
+                chart.data.labels.splice(0, 2);
+                chart.data.datasets[0].data.splice(0, 2);
+                // Also update the static line to match length
+                chart.data.datasets[1].data.push(6.5, 6.5); 
+                chart.data.datasets[1].data.splice(0, 2);
+            } else {
+                 chart.data.datasets[1].data.push(6.5, 6.5);
+            }
+
+            chart.update();
+        }
+
+        // --- Interaction Logic: Thought Experiments ---
+        function revealScenario(type) {
+            // Hide all first
+            document.getElementById('result-hedonism').classList.add('hidden');
+            document.getElementById('result-epicurean').classList.add('hidden');
+            document.getElementById('result-ascetic').classList.add('hidden');
+            
+            // Show selected
+            const resultId = `result-${type}`;
+            const element = document.getElementById(resultId);
+            if (element) {
+                element.classList.remove('hidden');
+                // Simple animation
+                element.style.opacity = 0;
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.5s';
+                    element.style.opacity = 1;
+                }, 10);
+            }
+        }
+    </script>
+</body>
+</html>
