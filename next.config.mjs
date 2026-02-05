@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-
+  basePath: '/mln111_thanh',
+  
   // Specify the path if your app is not deployed at the root of your domain.
   // basePath: '/',
 
@@ -15,5 +16,4 @@ const nextConfig = {
   // it in .gitlab-ci.yml as well.
   // distDir: 'dist',
 };
-
 export default nextConfig;
